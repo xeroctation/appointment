@@ -35,16 +35,18 @@ class AppointmentController extends Controller
                     'start_time' => $request->start_time,
                     'end_time' => $request->end_time,
                     'user_id' => $userId,
+                    'service_provider_id' => $request->service_provider_id,
                 ]);
 
                 return response()->json($event);
                 break;
 
             case 'edit':
-                $event = Appointment::find($request->id)->update([
-                    'name' => $request->name,
+                $event = Appointment::where('id', $request->id)->update([
                     'start_time' => $request->start_time,
                     'end_time' => $request->end_time,
+                    'user_id' => $userId,
+                    'service_provider_id' => $request->service_provider_id,
                 ]);
 
                 return response()->json($event);
