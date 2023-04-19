@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
@@ -21,10 +22,41 @@ class AppointmentController extends Controller
         }
 
 
-        return view('home', compact('events'));
+        return view('appointments.home', compact('events'));
     }
 
-//    public function index(){
-//        return view('home');
-//    }
+    public function store(Request $request)
+    {
+        switch ($request->type) {
+            case 'create':
+                $event = Appointment::create([
+                    'name' => $request->name,
+                    'start_time' => $request->start_time,
+                    'end_time' => $request->end_time,
+                ]);
+
+                return response()->json($event);
+                break;
+
+            case 'edit':
+                $event = Appointment::find($request->id)->update([
+                    'name' => $request->name,
+                    'start_time' => $request->start_time,
+                    'end_time' => $request->end_time,
+                ]);
+
+                return response()->json($event);
+                break;
+
+            case 'delete':
+                $event = Appointment::find($request->id)->delete();
+
+                return response()->json($event);
+                break;
+
+            default:
+                # ...
+                break;
+        }
+    }
 }

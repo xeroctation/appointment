@@ -14,6 +14,12 @@ class Appointment extends Model
 
     protected $table = 'appointments';
 
+    protected $fillable = [
+        'name',
+        'start_time',
+        'end_time'
+    ];
+
     public function serviceProvider(){
         return $this->belongsTo(ServiceProvider::class, 'service_provider_id');
     }
