@@ -17,10 +17,17 @@ class Appointment extends Model
     protected $fillable = [
         'name',
         'start_time',
-        'end_time'
+        'end_time',
+        'user_id',
+        'service_provider_id'
     ];
 
     public function serviceProvider(){
         return $this->belongsTo(ServiceProvider::class, 'service_provider_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

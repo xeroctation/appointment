@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
@@ -11,7 +12,7 @@ class AppointmentController extends Controller
     {
         $events = [];
 
-        $appointments = Appointment::all();
+        $appointments = Appointment::where('user_id', Auth::id())->get();
 
         foreach ($appointments as $appointment) {
             $events[] = [
@@ -21,18 +22,19 @@ class AppointmentController extends Controller
             ];
         }
 
-
-        return view('appointments.home', compact('events'));
+        return view('appointments.calendar', compact('events'));
     }
 
     public function store(Request $request)
     {
+        $userId = Auth::id();
         switch ($request->type) {
             case 'create':
                 $event = Appointment::create([
                     'name' => $request->name,
                     'start_time' => $request->start_time,
                     'end_time' => $request->end_time,
+                    'user_id' => $userId,
                 ]);
 
                 return response()->json($event);

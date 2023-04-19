@@ -20,10 +20,14 @@ Route::get('/', function () {
 
 
 
-Route::get('home', [AppointmentController::class, 'index'])->name('appointment');
+Route::get('calendar', [AppointmentController::class, 'index'])->name('appointment');
 Route::post('store', [AppointmentController::class, 'store'])->name('store');
 
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
