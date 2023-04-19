@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+
+Route::get('/home', [AppointmentController::class, 'index'])->name('appointment');
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
 });
