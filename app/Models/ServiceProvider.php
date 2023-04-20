@@ -12,5 +12,5 @@ class ServiceProvider extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'service_providers';
+    protected $table = 'service_provider';
 }

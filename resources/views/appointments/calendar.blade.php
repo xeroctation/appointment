@@ -8,14 +8,17 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Enter appointment name</h4>
+                    <h4 class="modal-title">Enter appointment details</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="name" class="form-control" placeholder="Appointment name">
+                    <select id="service_provider_id" name="service_provider_id" class="form-control">
+                        <option></option>
+                    </select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-default" id="cancelAppointment" data-dismiss="modal">Cancel</button>
                     <button type="button" id="saveAppointment" class="btn btn-primary">Save</button>
                 </div>
             </div>
@@ -26,6 +29,7 @@
         $(document).ready(function () {
             var SITEURL = "{{ url('/') }}";
             var start_time, end_time;
+            var service_provider_id;
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -54,6 +58,31 @@
                     $('#myModal').modal('show');
                     start_time = start;
                     end_time = end;
+                    $('#cancelAppointment').click(function() {
+                        $('#myModal').modal('hide');
+                    }),
+                    $.ajax({
+                        url: SITEURL + "/service_provider",
+                        type: "GET",
+                        success: function (data) {
+                            $('#service_provider_id').empty();
+                            $.each(data, function(index, service_provider) {
+                                $('#service_provider_id').append('<option value="' + service_provider.id + '">' + service_provider.name + '</option>');
+                            });
+                            $('#service_provider_id').prepend('<option selected=""></option>').select2({
+                                placeholder: "Select service provider",
+                                allowClear: true,
+                                dropdownParent: "#myModal"
+                            });
+                            $('#service_provider_id').on('change', function() {
+                                service_provider_id = $(this).val();
+                                console.log(service_provider_id);
+                            });
+                            service_provider_id = $('#service_provider_id').val();
+                            console.log(service_provider_id);
+                        }
+                    });
+
                     $('#saveAppointment').click(function() {
                         var name = $('#name').val();
                         if (name) {
@@ -63,6 +92,7 @@
                                     name: name,
                                     start_time: start_time.format("Y-MM-DD HH:mm:ss"),
                                     end_time: end_time.format("Y-MM-DD HH:mm:ss"),
+                                    service_provider_id: service_provider_id,
                                     type: 'create',
                                 },
                                 type: "POST",

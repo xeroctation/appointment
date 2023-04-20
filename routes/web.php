@@ -15,13 +15,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('appointment');
 });
 
 
 
-Route::get('calendar', [AppointmentController::class, 'index'])->name('appointment');
-Route::post('store', [AppointmentController::class, 'store'])->name('store');
+Route::group(['middleware' => 'auth'], function () {
+    Route::controller(AppointmentController::class)->group(function() {
+        Route::get('calendar', 'index')->name('appointment');
+        Route::post('store', 'store')->name('store');
+        Route::get('service_provider', 'serviceProvider')->name('service_provider');
+    });
+});
 
 
 Route::group(['prefix' => 'admin'], function () {
@@ -29,5 +34,3 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

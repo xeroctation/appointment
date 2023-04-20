@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +17,7 @@ class AppointmentController extends Controller
 
         foreach ($appointments as $appointment) {
             $events[] = [
-                'title' => $appointment->name,
+                'title' => $appointment->name .  ' - ' . ($appointment->service_provider_id ? $appointment->serviceProvider->name : ''),
                 'start' => \Carbon\Carbon::parse($appointment->start_time)->format('Y-m-d H:i:s'),
                 'end' => \Carbon\Carbon::parse($appointment->end_time)->format('Y-m-d H:i:s'),
             ];
@@ -62,5 +63,11 @@ class AppointmentController extends Controller
                 # ...
                 break;
         }
+    }
+
+    public function serviceProvider()
+    {
+        $service_providers = ServiceProvider::all();
+        return response()->json($service_providers);
     }
 }
