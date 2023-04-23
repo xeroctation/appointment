@@ -23,7 +23,9 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::controller(AppointmentController::class)->group(function() {
         Route::get('calendar', 'index')->name('appointment');
-        Route::post('store', 'store')->name('store');
+        Route::post('calendar/store', 'store')->name('calendar.store');
+        Route::patch('calendar/update/{id}', 'update')->name('calendar.update');
+        Route::delete('calendar/delete/{id}', 'delete')->name('calendar.delete');
         Route::get('service_provider', 'serviceProvider')->name('service_provider');
     });
 });

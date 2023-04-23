@@ -27,7 +27,6 @@
 
     <script>
         $(document).ready(function () {
-            var SITEURL = "{{ url('/') }}";
             var start_time, end_time;
             var service_provider_id;
             $.ajaxSetup({
@@ -62,7 +61,7 @@
                         $('#myModal').modal('hide');
                     }),
                     $.ajax({
-                        url: SITEURL + "/service_provider",
+                        url: "{{ route('service_provider') }}",
                         type: "GET",
                         success: function (data) {
                             $('#service_provider_id').empty();
@@ -87,7 +86,7 @@
                         var name = $('#name').val();
                         if (name) {
                             $.ajax({
-                                url: SITEURL + "/store",
+                                url: "{{ route('calendar.store') }}",
                                 data: {
                                     name: name,
                                     start_time: start_time.format("Y-MM-DD HH:mm:ss"),
@@ -115,18 +114,18 @@
                 },
 
                 eventDrop: function (event, delta) {
-                    var start_time = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
-                    var end_time = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
+                    var id = event.id;
+                    var start_time = moment(event.start).format('YYYY-MM-DD');
+                    var end_time = moment(event.end).format('YYYY-MM-DD');
+
                     $.ajax({
-                        url: SITEURL + '/store',
+                        url: "{{ route('calendar.update', '') }}" +'/'+ id,
+                        type:"PATCH",
+                        dataType:'json',
                         data: {
-                            title: event.name,
-                            start: start_time,
-                            end: end_time,
-                            id: event.id,
-                            type: 'edit'
+                            start_time,
+                            end_time,
                         },
-                        type: "POST",
                         success: function (response) {
                             console.log(response);
                             console.log(delta)
@@ -139,20 +138,23 @@
                     });
                 },
                 eventClick: function (event) {
-                    var eventDelete = confirm("Are you sure?");
+                    var eventDelete = confirm("Are you sure to delete?");
+                    var id = event.id;
+
                     if (eventDelete) {
                         $.ajax({
-                            type: "POST",
-                            url: SITEURL + '/store',
-                            data: {
-                                id: event.id,
-                                type: 'delete'
-                            },
+                            type: "DELETE",
+                            url: "{{ route('calendar.delete', '') }}" +'/'+ id,
+                            dataType:'json',
                             success: function (response) {
-                                calendar.fullCalendar('removeEvents', event.id);
+                                calendar.fullCalendar('removeEvents', response);
+                                console.log(response);
                                 displayMessage("Event removed");
-
-                            }
+                            },
+                            error:function(error)
+                            {
+                                console.log(error)
+                            },
                         });
                     }
                 }
