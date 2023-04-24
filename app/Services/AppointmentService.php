@@ -29,7 +29,8 @@ class AppointmentService
     public function store(object $request, object $user)
     {
         $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
+            'service_provider_id' => 'required'
         ]);
 
         $event = Appointment::create([

@@ -19,7 +19,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" id="cancelAppointment" data-dismiss="modal">Cancel</button>
-                    <button type="button" id="saveAppointment" class="btn btn-primary">Save</button>
+                    <button type="button" id="saveAppointment" class="btn btn-primary" disabled>Save</button>
                 </div>
             </div>
         </div>
@@ -27,6 +27,15 @@
 
     <script>
         $(document).ready(function () {
+
+            $('#name, #service_provider_id').on('input', function() {
+                if ($('#name').val() && $('#service_provider_id').val()) {
+                    $('#saveAppointment').removeAttr('disabled');
+                } else {
+                    $('#saveAppointment').attr('disabled', 'disabled');
+                }
+            });
+
             var start_time, end_time;
             var service_provider_id;
             $.ajaxSetup({
@@ -41,6 +50,12 @@
                     center:'title',
                     right:'month,agendaWeek,agendaDay'
                 },
+                hiddenDays: [ 6, 7 ],
+                timeFormat: 'H:mm',
+                slotLabelFormat:"HH:mm",
+                theme: 'jquery-ui',
+                minTime: "09:00:00",
+                maxTime: "19:00:00",
                 events: {!! json_encode($events) !!},
                 displayEventTime: true,
                 eventRender: function (event, element, view) {
